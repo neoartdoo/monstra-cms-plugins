@@ -28,6 +28,14 @@
 
 
         /**
+         * Parrent page name(slug)
+         *
+         * @var string
+         */
+        public static $parent_page_name = 'blog';
+
+
+        /**
          * Get tags
          *
          *  <code> 
@@ -38,10 +46,25 @@
          */
         public static function getTags() {
 
+            // Display view
+            return View::factory('blog/views/frontend/tags')
+                    ->assign('tags', Blog::getTagsArray())
+                    ->render();
+
+        }
+
+
+
+        public static function getTagsArray($slug = null) {
+
             $tags = array();
             $tags_string = '';
 
-            $posts = Pages::$pages->select('[parent="blog" and status="published"]', 'all');
+            if ($slug == null) {
+                $posts = Pages::$pages->select('[parent="'.Blog::$parent_page_name.'" and status="published"]', 'all');
+            } else {
+                $posts = Pages::$pages->select('[parent="'.Blog::$parent_page_name.'" and status="published" and slug="'.$slug.'"]', 'all');
+            }
         
             foreach($posts as $post) {
                 $tags_string .= $post['keywords'].',';
@@ -64,11 +87,7 @@
 
             $tags = array_unique($tags);
 
-            // Display view
-            return View::factory('blog/views/frontend/tags')
-                    ->assign('tags', $tags)
-                    ->render();
-
+            return $tags;
         }
 
 
@@ -88,9 +107,9 @@
         public static function getPosts($limit = null) {
 
             if (Request::get('tag')) {
-                $query = '[parent="blog" and status="published" and contains(keywords, "'.Request::get('tag').'")]';
+                $query = '[parent="'.Blog::$parent_page_name.'" and status="published" and contains(keywords, "'.Request::get('tag').'")]';
             } else {
-                $query = '[parent="blog" and status="published"]';
+                $query = '[parent="'.Blog::$parent_page_name.'" and status="published"]';
             }
 
 
@@ -105,6 +124,28 @@
             return View::factory('blog/views/frontend/index')
                     ->assign('posts', $posts)
                     ->render();
+        }
+
+
+        public static function getRelatedPosts($limit = null) {
+
+            $related_posts = array();
+            $tags = Blog::getTagsArray(Page::slug());
+
+            foreach($tags as $tag) {
+
+                $query = '[parent="'.Blog::$parent_page_name.'" and status="published" and contains(keywords, "'.$tag.'") and slug!="'.Page::slug().'"]';
+                
+                if ($result = Arr::subvalSort(Pages::$pages->select($query, ($limit == null) ? 'all' : (int)$limit), 'date', 'DESC')) {
+                    $related_posts = $result; 
+                }
+            }
+
+            // Display view
+            return View::factory('blog/views/frontend/related_posts')
+                    ->assign('related_posts', $related_posts)
+                    ->render();
+
         }
 
 
