@@ -54,7 +54,6 @@
         }
 
 
-
         public static function getTagsArray($slug = null) {
 
             $tags = array();
@@ -85,8 +84,10 @@
             // Trim tags
             array_walk($tags, create_function('&$val', '$val = trim($val);')); 
 
+            // Get unique tags
             $tags = array_unique($tags);
 
+            // Return tags
             return $tags;
         }
 
@@ -140,43 +141,16 @@
             foreach($posts as $key => $post) {
                 $post_short = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $post['id'] . '.page.txt')));
                 $posts[$key]['content'] = $post_short[0];
-            }           
-
-            $pager = '';
-
-            // Pager
-            $neighbours = 6;
-            $left_neighbour = $page - $neighbours;
-            if ($left_neighbour < 1) $left_neighbour = 1;
-
-            $right_neighbour = $page + $neighbours;
-            if ($right_neighbour > $pages) $right_neighbour = $pages;
-
-            if ($page > 1) {
-                 $pager .=' <a href="?page=1">начало</a> ... <a href="?page=' . ($page-1) . '">←сюда</a> ';
-            }
-
-            for ($i=$left_neighbour; $i<=$right_neighbour; $i++) {
-                if ($i != $page) {
-                    $pager.=' <a href="?page=' . $i . '">' . $i . '</a> ';
-                }
-                else {
-                    // выбранная страница
-                    $pager.= ' <b>' . $i . '</b> ';
-                }
-            }
-
-            if ($page < $pages) {
-                $pager.= ' <a href="?page=' . ($page+1) . '">туда→</a> ... <a href="?page=' . $pages . '">конец</a> ';
             }
 
             // Display view
             return View::factory('blog/views/frontend/index')
                     ->assign('posts', $posts)
-                    ->assign('pager', $pager)
+                    ->render().
+                   View::factory('blog/views/frontend/pager')
+                    ->assign('pages', $pages)
+                    ->assign('page', $page)
                     ->render();
-
-
         }
 
 

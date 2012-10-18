@@ -3,5 +3,3 @@
     <?php echo $post['content'] ?>
     <br><br>
 <?php } ?>
-
-<?php echo $pager; ?>
