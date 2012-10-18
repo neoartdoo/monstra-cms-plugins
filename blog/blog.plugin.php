@@ -104,7 +104,10 @@
          *
          * @return string
          */
-        public static function getPosts($limit = null) {
+        public static function getPosts($nums = 2) {
+
+            // Get page param
+            $page = (Request::get('page')) ? (int)Request::get('page') : 1;
 
             if (Request::get('tag')) {
                 $query = '[parent="'.Blog::$parent_page_name.'" and status="published" and contains(keywords, "'.Request::get('tag').'")]';
@@ -112,18 +115,68 @@
                 $query = '[parent="'.Blog::$parent_page_name.'" and status="published"]';
             }
 
+            // Get Elements Count
+            $elements = count(Pages::$pages->select($query, 'all'));
 
-            $posts = Arr::subvalSort(Pages::$pages->select($query, ($limit == null) ? 'all' : (int)$limit), 'date', 'DESC');
+            // Get Pages Count
+            $pages = ceil($elements/$nums);
 
+ 
+            if ($page < 1) {
+                $page = 1;
+            } elseif ($page > $pages) {
+                $page = $pages;
+            }
+
+            $start = ($page-1)*$nums;
+
+            // If there is no posts
+            if ($start < 0) $start = 0;
+
+            // Get posts and sort by DESC
+            $posts = Arr::subvalSort(Pages::$pages->select($query, $nums, $start), 'date', 'DESC');
+
+            // 
             foreach($posts as $key => $post) {
                 $post_short = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $post['id'] . '.page.txt')));
                 $posts[$key]['content'] = $post_short[0];
             }           
 
+            $pager = '';
+
+            // Pager
+            $neighbours = 6;
+            $left_neighbour = $page - $neighbours;
+            if ($left_neighbour < 1) $left_neighbour = 1;
+
+            $right_neighbour = $page + $neighbours;
+            if ($right_neighbour > $pages) $right_neighbour = $pages;
+
+            if ($page > 1) {
+                 $pager .=' <a href="?page=1">начало</a> ... <a href="?page=' . ($page-1) . '">←сюда</a> ';
+            }
+
+            for ($i=$left_neighbour; $i<=$right_neighbour; $i++) {
+                if ($i != $page) {
+                    $pager.=' <a href="?page=' . $i . '">' . $i . '</a> ';
+                }
+                else {
+                    // выбранная страница
+                    $pager.= ' <b>' . $i . '</b> ';
+                }
+            }
+
+            if ($page < $pages) {
+                $pager.= ' <a href="?page=' . ($page+1) . '">туда→</a> ... <a href="?page=' . $pages . '">конец</a> ';
+            }
+
             // Display view
             return View::factory('blog/views/frontend/index')
                     ->assign('posts', $posts)
+                    ->assign('pager', $pager)
                     ->render();
+
+
         }
 
 
