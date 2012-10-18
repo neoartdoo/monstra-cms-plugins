@@ -54,6 +54,15 @@
         }
 
 
+        /**
+         * Get tags array
+         *
+         *  <code> 
+         *      echo Blog::getTagsArray();
+         *  </code>
+         *
+         * @return array
+         */
         public static function getTagsArray($slug = null) {
 
             $tags = array();
@@ -154,6 +163,15 @@
         }
 
 
+        /**
+         * Get related posts
+         *
+         *  <code> 
+         *      echo Blog::getRelatedPosts();
+         *  </code>
+         *
+         * @return string
+         */
         public static function getRelatedPosts($limit = null) {
 
             $related_posts = array();
@@ -177,7 +195,7 @@
 
 
         /**
-         * Get post
+         * Get post content
          *
          *  <code> 
          *      echo Blog::getPost();
@@ -198,6 +216,20 @@
 
             // Return post
             return $post;
+        }
+
+
+        /**
+         * Get Blog Post title
+         *
+         *  <code> 
+         *      echo Blog::getPostTitle();
+         *  </code>
+         *
+         * @return string
+         */
+        public static function getPostTitle() {
+            return Page::title();
         }
 
     }
