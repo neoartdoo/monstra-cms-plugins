@@ -44,11 +44,11 @@
          *
          * @return string
          */
-        public static function getTags() {
+        public static function getTags($slug = null) {
 
             // Display view
             return View::factory('blog/views/frontend/tags')
-                    ->assign('tags', Blog::getTagsArray())
+                    ->assign('tags', Blog::getTagsArray($slug))
                     ->render();
 
         }
