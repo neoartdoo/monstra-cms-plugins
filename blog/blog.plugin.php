@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.4.0
+     *  @version 1.5.0
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.4.0',
+                    '1.5.0',
                     'Awilum',                 
                     'http://monstra.org/');
 
