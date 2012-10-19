@@ -149,7 +149,7 @@
             // 
             foreach($posts as $key => $post) {
                 $post_short = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $post['id'] . '.page.txt')));
-                $posts[$key]['content'] = $post_short[0];
+                $posts[$key]['content'] = Filter::apply('content', $post_short[0]);
             }
 
             // Display view
