@@ -65,6 +65,7 @@
          */
         public static function getTagsArray($slug = null) {
 
+            // Init vars
             $tags = array();
             $tags_string = '';
 
