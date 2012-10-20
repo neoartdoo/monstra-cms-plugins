@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.1.0
+     *  @version 1.1.1
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Guestbook', 'guestbook'),
                     __('Guest book plugin for Monstra', 'guestbook'),  
-                    '1.1.0',
+                    '1.1.1',
                     'Awilum',                 
                     'http://monstra.org/',
                     'guestbook');

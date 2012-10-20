@@ -1,7 +1,7 @@
 <?php
 
     return array(
-        'sandbox' => array(
+        'guestbook' => array(
             'Guestbook' => 'Гостевая книга',
             'Guest book plugin for Monstra' => 'Гостевая книга Monstra',
             'Empty required fields!' => 'Пустые поля обязательные для заполнения!',
@@ -12,5 +12,6 @@
             'Message' => 'Сообщение',
             'Send' => 'Отправить',
             'Guestbook Template' => 'Шаблон гостевой книги',
+            'Actions' => 'Действия',
         )
     );
