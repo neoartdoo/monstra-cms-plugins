@@ -21,7 +21,7 @@
         <td><?php echo Date::format($record['date']); ?></td>
         <td>
             <?php echo Html::anchor(__('Delete', 'guestbook'),
-                      'index.php?id=guestbook&action=delete_record&record_id='.$record['id'],
+                      'index.php?id=guestbook&action=delete_record&record_id='.$record['id'].'&token='.Security::token(),
                        array('class' => 'btn btn-actions', 'onclick' => "return confirmDelete('".__('Delete record', 'guestbook')."')"));
             ?>
         </td>

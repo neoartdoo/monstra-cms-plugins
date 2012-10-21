@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.1.1
+     *  @version 1.2.0
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Guestbook', 'guestbook'),
                     __('Guest book plugin for Monstra', 'guestbook'),  
-                    '1.1.1',
+                    '1.2.0',
                     'Awilum',                 
                     'http://monstra.org/',
                     'guestbook');
@@ -77,23 +77,27 @@
 
             // Add new record
             if (Request::post('guestbook_submit')) {
+
+                if (Security::check(Request::post('csrf'))) {
                 
-                if (Request::post('guestbook_username') == '' || Request::post('guestbook_email') == '' || Request::post('guestbook_message') == '') {
-                    $errors['guestbook_empty_fields'] = __('Empty required fields!', 'guestbook');
-                }
+                    if (Request::post('guestbook_username') == '' || Request::post('guestbook_email') == '' || Request::post('guestbook_message') == '') {
+                        $errors['guestbook_empty_fields'] = __('Empty required fields!', 'guestbook');
+                    }
 
-                if ( ! Valid::email(Request::post('guestbook_email'))) {
-                    $errors['guestbook_email_not_valid'] = __('Email address is not valid!', 'guestbook');
-                }
+                    if ( ! Valid::email(Request::post('guestbook_email'))) {
+                        $errors['guestbook_email_not_valid'] = __('Email address is not valid!', 'guestbook');
+                    }
 
-                if ( ! Captcha::correctAnswer($_POST['answer'])) {
-                    $errors['guestbook_captcha_not_valid'] = __('Captcha answer is wrong!', 'guestbook');
-                }
+                    if (Option::get('captcha_installed') == 'true' && ! CryptCaptcha::check(Request::post('answer'))) { 
+                        $errors['users_captcha_wrong'] = __('Captcha code is wrong', 'users');
+                    }
 
-                if (count($errors) == 0) {
-                    Guestbook::$guestbook->insert(array('username' => $username, 'email' => $email, 'message' => $message, 'date' => time()));
-                    Request::redirect(Option::get('siteurl').'guestbook');
-                }
+                    if (count($errors) == 0) {
+                        Guestbook::$guestbook->insert(array('username' => $username, 'email' => $email, 'message' => $message, 'date' => time()));
+                        Request::redirect(Option::get('siteurl').'guestbook');
+                    }
+                    
+                } else { die('csrf detected!'); }
 
             }
 

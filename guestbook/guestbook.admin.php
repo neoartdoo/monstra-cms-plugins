@@ -23,8 +23,13 @@
 
             // Delete record
             if (Request::get('action') &&  Request::get('action') == 'delete_record' && Request::get('record_id')) {
-                $guestbook->delete((int)Request::get('record_id'));
-                Request::redirect('index.php?id=guestbook');
+               
+                if (Security::check(Request::get('token'))) {
+                
+                    $guestbook->delete((int)Request::get('record_id'));
+                    Request::redirect('index.php?id=guestbook');
+
+                } else { die('csrf detected!'); }
             }
                         
             // Display view
