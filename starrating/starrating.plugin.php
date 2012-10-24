@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.0.0
+     *  @version 1.1.0
      *
      */
 
@@ -16,17 +16,17 @@
     Plugin::register( __FILE__,                    
                     __('Star Rating', 'starrating'),
                     __('Star Rating plugin for Monstra', 'starrating'),  
-                    '1.0.0',
+                    '1.1.0',
                     'Awilum',                 
                     'http://monstra.org/');
 
     if ( ! BACKEND) {
 
         // Add Stylesheet
-        Stylesheet::add(PLUGINS . DS . 'starrating/starrating/jquery.rating.css', 'frontend', 15);
+        Stylesheet::add('plugins/starrating/starrating/jquery.rating.css', 'frontend', 15);
 
         // Add Javascript
-        Javascript::add(PLUGINS . DS . 'starrating/starrating/jquery.rating.pack.js', 'frontend', 15);
+        Javascript::add('plugins/starrating/starrating/jquery.rating.pack.js', 'frontend', 15);
 
     }
 
@@ -72,15 +72,15 @@
 
             // Vote!
             if (Request::post('sr_vote')) {
-                $mark_ip = $sr_xml->select('//vote[ip="'.$_SERVER['REMOTE_ADDR'].'"]', 'all');                                   
+                $mark_ip = $sr_xml->select('[ip="'.$_SERVER['REMOTE_ADDR'].'"]', 'all');                                   
                 if (empty($mark_ip)) $sr_xml->insert(array('mark' => Request::post('star'), 'ip' => $_SERVER['REMOTE_ADDR']));
             }
 
             // Select marks
-            $marks = $sr_xml->select(null, 'all');
-        
+            $marks = $sr_xml->select();
+
             foreach ($marks as $_m) {
-                $_marks[] = (int)$_m;           
+                $_marks[] = (int)$_m['mark'];           
             }       
 
             // Count mark
