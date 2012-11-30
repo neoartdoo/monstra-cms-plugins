@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.5.0
+     *  @version 1.5.1
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.5.0',
+                    '1.5.1',
                     'Awilum',                 
                     'http://monstra.org/');
 
@@ -115,7 +115,7 @@
          *
          * @return string
          */
-        public static function getPosts($nums = 2) {
+        public static function getPosts($nums = 10) {
 
             // Get page param
             $page = (Request::get('page')) ? (int)Request::get('page') : 1;
@@ -145,9 +145,9 @@
             if ($start < 0) $start = 0;
 
             // Get posts and sort by DESC
-            $posts = Arr::subvalSort(Pages::$pages->select($query, $nums, $start), 'date', 'DESC');
+            $posts = Pages::$pages->select($query, $nums, $start, array(), 'date', 'DESC');
 
-            // 
+            // Loop
             foreach($posts as $key => $post) {
                 $post_short = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $post['id'] . '.page.txt')));
                 $posts[$key]['content'] = Filter::apply('content', $post_short[0]);
