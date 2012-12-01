@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.5.1
+     *  @version 1.5.2
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.5.1',
+                    '1.5.2',
                     'Awilum',                 
                     'http://monstra.org/');
 
@@ -145,7 +145,7 @@
             if ($start < 0) $start = 0;
 
             // Get posts and sort by DESC
-            $posts = Pages::$pages->select($query, $nums, $start, array(), 'date', 'DESC');
+            $posts = Pages::$pages->select($query, $nums, $start, array('slug', 'title', 'author', 'date'), 'date', 'DESC');
 
             // Loop
             foreach($posts as $key => $post) {
