@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.5.2
+     *  @version 1.6.0
      *
      */
 
@@ -16,8 +16,8 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.5.2',
-                    'Awilum',                 
+                    '1.6.0',
+                    'Awilum',            
                     'http://monstra.org/');
 
 
@@ -51,6 +51,38 @@
                     ->assign('tags', Blog::getTagsArray($slug))
                     ->render();
 
+        }
+
+
+        /**
+         * Get breadcrumbs
+         *
+         *  <code> 
+         *      echo Blog::breadcrumbs();
+         *  </code>
+         *
+         * @return string
+         */
+        public static function breadcrumbs() {
+            $current_page = Pages::$requested_page;
+            $parent_page = '';
+            if ($current_page !== 'error404') {  
+                $page = Pages::$pages->select('[slug="'.$current_page.'"]', null);
+                if (trim($page['parent']) !== '') {
+                    $parent = true;    
+                    $parent_page = Pages::$pages->select('[slug="'.$page['parent'].'"]', null);
+                } else { 
+                    $parent = false;
+                }
+                
+                // Display view
+                View::factory('blog/views/frontend/breadcrumbs')
+                        ->assign('current_page', $current_page)                                 
+                        ->assign('page', $page)
+                        ->assign('parent', $parent)
+                        ->assign('parent_page', $parent_page)
+                        ->display();
+            }
         }
 
 
@@ -121,9 +153,11 @@
             $page = (Request::get('page')) ? (int)Request::get('page') : 1;
 
             if (Request::get('tag')) {
-                $query = '[parent="'.Blog::$parent_page_name.'" and status="published" and contains(keywords, "'.Request::get('tag').'")]';
+                $query = '[parent="'.Blog::$parent_page_name.'" and status="published" and contains(keywords, "'.Request::get('tag').'")]';                
+                Notification::set('tag', Request::get('tag'));
             } else {
                 $query = '[parent="'.Blog::$parent_page_name.'" and status="published"]';
+                Notification::clean();
             }
 
             // Get Elements Count
