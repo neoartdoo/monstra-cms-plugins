@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.6.0
+     *  @version 1.7.0
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.6.0',
+                    '1.7.0',
                     'Awilum',            
                     'http://monstra.org/');
 
@@ -145,6 +145,7 @@
          *      echo Blog::getPosts(5);
          *  </code>
          *
+         * @param  integer $num Number of posts to show
          * @return string
          */
         public static function getPosts($nums = 10) {
@@ -195,6 +196,42 @@
                     ->assign('pages', $pages)
                     ->assign('page', $page)
                     ->render();
+        }
+
+
+        /**
+         * Get posts block
+         *
+         *  <code> 
+         *      // Get all posts
+         *      echo Blog::getPostsBlock();
+         *
+         *      // Get last 5 posts
+         *      echo Blog::getPostsBlock(5);
+         *  </code>
+         *
+         * @param  integer $num Number of posts to show
+         * @return string
+         */
+        public static function getPostsBlock($nums = 10) {
+
+            // XPath Query
+            $query = '[parent="'.Blog::$parent_page_name.'" and status="published"]';
+
+            // Get posts and sort by DESC
+            $posts = Pages::$pages->select($query, $nums, 0, array('slug', 'title', 'author', 'date'), 'date', 'DESC');
+
+            // Loop
+            foreach($posts as $key => $post) {
+                $post_short = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $post['id'] . '.page.txt')));
+                $posts[$key]['content'] = Filter::apply('content', $post_short[0]);
+            }
+
+            // Display view
+            return View::factory('blog/views/frontend/block')
+                    ->assign('posts', $posts)
+                    ->render();
+
         }
 
 
