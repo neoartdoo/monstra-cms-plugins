@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <?php
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', rtrim(dirname(__FILE__), '\\/'));
-define('BACKEND', false);    
+define('BACKEND', false);
 define('MONSTRA_ACCESS', true);
 
 // Load bootstrap file
@@ -13,8 +12,10 @@ $posts = Pages::$pages->select('[parent="blog" and status="published"]', 5, 0, a
 
 // Date now
 $now = date("D, d M Y H:i:s T");
-header('Content-type: text/xml'); 
+ob_end_clean();
 ?>
+<?php echo'<?xml version="1.0" encoding="utf-8"?>'."\n"; ?>
+<?php header('Content-type: text/xml'); ?>
 <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom"> 
 <title>MonstraCMS::BLOG::RSS</title>
 <link><?php echo Option::get('siteurl'); ?></link>
