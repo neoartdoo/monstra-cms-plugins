@@ -7,7 +7,7 @@
      *  @subpackage Plugins
      *  @author Romanenko Sergey / Awilum
      *  @copyright 2012 Romanenko Sergey / Awilum
-     *  @version 1.7.1
+     *  @version 1.7.2
      *
      */
 
@@ -16,7 +16,7 @@
     Plugin::register( __FILE__,                    
                     __('Blog', 'blog'),
                     __('Blog plugin for Monstra', 'blog'),  
-                    '1.7.1',
+                    '1.7.2',
                     'Awilum',            
                     'http://monstra.org/');
 
@@ -288,6 +288,35 @@
 
             // Return post
             return $post;
+        }
+
+        public static function getPostBeforeCut($slug) {
+
+            $page = Pages::$pages->select('[slug="'.$slug.'"]', null);
+
+            // Get post
+            $post = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $page['id'] . '.page.txt')));
+
+            // Apply content filter
+            $post_content = Filter::apply('content', $post[0]);
+
+            // Return post
+            return $post_content;
+        }
+
+
+        public static function getPostAfterCut($slug) {
+
+            $page = Pages::$pages->select('[slug="'.$slug.'"]', null);
+
+            // Get post
+            $post = explode("{cut}", Text::toHtml(File::getContent(STORAGE . DS . 'pages' . DS . $page['id'] . '.page.txt')));
+
+            // Apply content filter
+            $post_content = Filter::apply('content', $post[1]);
+
+            // Return post
+            return $post_content;
         }
 
 
